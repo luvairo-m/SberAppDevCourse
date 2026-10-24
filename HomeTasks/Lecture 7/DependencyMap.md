@@ -1,23 +1,35 @@
 # Карта зависимостей StPlatform и PetClinic
 
-## StPlatform: сдача домашней работы
+## StPlatform — сценарий «сдать домашку»
 
-Исследован репозиторий [UnMatty/StPlatform](https://gitverse.ru/UnMatty/StPlatform) на commit [`7bd1066`](https://gitverse.ru/UnMatty/StPlatform/commit/7bd10669913fbef8f8c6e7331c25420489edd8ba).
+Для разбора я взял репозиторий [UnMatty/StPlatform](https://gitverse.ru/UnMatty/StPlatform), commit [`7bd1066`](https://gitverse.ru/UnMatty/StPlatform/commit/7bd10669913fbef8f8c6e7331c25420489edd8ba).
 
-### Слои
+### Какие слои я нашёл
 
-- Контроллеры веб-страниц: `ActivateController`, `AssignmentPageController`, `AttachmentController`, `CabinetController`, `ConsentPageController`, `LoginController`, `PasswordResetController`, `TeacherAssignmentController`, `TeacherImportController`, `TeacherStudentController`.
-- REST-контроллеры: `ApiAuthController`, `ApiAssignmentController`, `ApiSubmissionController`.
-- Сервисы: `ActivationService`, `AssignmentService`, `ConsentService`, `PasswordResetService`, `PlatformUserDetailsService`, `StudentRemovalService`, `SubmissionService`, `UserService`.
-- Репозитории Spring Data JPA: `AssignmentRepository`, `ConsentRecordRepository`, `SubmissionAttachmentRepository`, `SubmissionRepository`, `UserRepository`.
-- Модель: `Assignment`, `ConsentRecord`, `Submission`, `SubmissionAttachment`, `User` и связанные enum-классы.
-- Инфраструктурные компоненты: `AttachmentStorage` хранит файлы на диске, `InviteMailer` и `PasswordResetMailer` отправляют письма, `LinkValidator` проверяет ссылки.
+В проекте нет отдельных папок с названиями `controller`, `service` и `repository`, но классы этих слоёв есть и отмечены аннотациями Spring.
 
-`CommonPageModel`, `WebExceptionHandler` и `ApiExceptionHandler` относятся к обвязке слоя представления: добавляют общие данные страницы и преобразуют исключения в HTTP-ответы.
+**Контроллеры веб-страниц:**
 
-### Цепочка вызовов
+- `AssignmentPageController` — страница задания, сдача и проверка работы;
+- `CabinetController` — кабинет студента или преподавателя;
+- `AttachmentController` — скачивание приложенного файла;
+- `ActivateController`, `LoginController`, `PasswordResetController` — вход, активация и восстановление пароля;
+- `TeacherAssignmentController`, `TeacherImportController`, `TeacherStudentController` — действия преподавателя;
+- `ConsentPageController` — страницы согласий.
 
-Для успешной сдачи через веб-форму цепочка начинается с `POST /assignments/{id}/submit`:
+**REST-контроллеры:** `ApiAuthController`, `ApiAssignmentController`, `ApiSubmissionController`.
+
+**Сервисы:** `ActivationService`, `AssignmentService`, `ConsentService`, `PasswordResetService`, `PlatformUserDetailsService`, `StudentRemovalService`, `SubmissionService`, `UserService`.
+
+**Репозитории:** `AssignmentRepository`, `ConsentRecordRepository`, `SubmissionAttachmentRepository`, `SubmissionRepository`, `UserRepository`. Все они наследуются от `JpaRepository`, поэтому реализацию базовых методов вроде `findById` и `save` создаёт Spring Data JPA.
+
+**Модель:** основные сущности — `Assignment`, `ConsentRecord`, `Submission`, `SubmissionAttachment`, `User`.
+
+Ещё есть инфраструктурные компоненты: `AttachmentStorage` записывает файлы на диск, `InviteMailer` и `PasswordResetMailer` отправляют письма, а `LinkValidator` проверяет ссылки на GitVerse и GitHub.
+
+### Как проходит сдача домашней работы
+
+Я рассматривал успешную отправку веб-формы `POST /assignments/{id}/submit`. Главная цепочка выглядит так:
 
 ```text
 AssignmentPageController.java.submitWork
@@ -35,43 +47,69 @@ AssignmentPageController.java.submitWork
     → SubmissionRepository.java.save
 ```
 
-Если студент прикрепил файл, после сохранения `Submission` выполняется дополнительная ветка:
+Сначала `AssignmentPageController.submitWork` получает из Spring Security id вошедшего пользователя. Через `UserService` и `UserRepository` загружается сущность `User`. После этого контроллер делит многострочное поле со ссылками на список и вызывает `SubmissionService.submit`.
+
+Внутри `SubmissionService.submit` последовательно проверяется:
+
+1. Пользователь действительно имеет роль `STUDENT`.
+2. Задание существует и опубликовано.
+3. Предыдущая работа не находится в статусе `UNCHECKED` или `ACCEPTED`. Повторно отправить работу можно после `NEEDS_REWORK`.
+4. Дедлайн не прошёл. Для доработки после `NEEDS_REWORK` сделано исключение.
+5. Заполнено хотя бы одно поле: ссылка, комментарий или файл.
+6. Каждая ссылка использует `https` и ведёт на разрешённый GitVerse или GitHub.
+7. Не превышены ограничения на количество и длину ссылок и комментария.
+
+Только после этих проверок создаётся `Submission`, а `SubmissionRepository.save` сохраняет его в базе. Если прикреплён файл, появляется ещё одна ветка:
 
 ```text
 SubmissionService.java.submit
   → AttachmentStorage.java.store
+    → Files.createDirectories
     → Files.copy
   → SubmissionAttachmentRepository.java.save
 ```
 
-После успешного выполнения контроллер возвращает redirect на `/assignments/{id}`. REST-вариант входит через `ApiSubmissionController.java.submit`, но затем вызывает тот же `SubmissionService.java.submit`.
+То есть содержимое файла лежит на диске под случайным UUID-именем, а в базе хранится сущность `SubmissionAttachment` с метаданными и ссылкой на сдачу. После успешного сохранения контроллер кладёт сообщение «Работа принята на проверку» во flash-атрибут и делает redirect обратно на `/assignments/{id}`.
 
-### Направление зависимостей и граница
+У REST API начало немного другое:
 
-Основные стрелки идут вниз: контроллер → сервис → репозиторий или инфраструктура. Но граница не совсем чистая: `SubmissionService.submit` принимает `MultipartFile`, поэтому сервисный слой зависит от типа из Spring Web; кроме того, сервис обращается к `AssignmentRepository` напрямую, минуя `AssignmentService`.
+```text
+ApiSubmissionController.java.submit
+  → UserService.java.byId
+  → SubmissionService.java.submit
+  → те же проверки и SubmissionRepository.java.save
+```
 
-Я бы провёл границу между HTTP и сценарием сдачи: контроллер преобразовывал бы форму в обычную команду и нейтральное описание файла, а сервис работал бы с ними через интерфейс хранилища, не зная о `MultipartFile`.
+Получается, что веб-страница и REST API используют одну бизнес-логику, а не дублируют правила сдачи.
 
-**Зачем нужна граница:** чтобы бизнес-правила сдачи не приходилось менять при замене HTTP-интерфейса или способа хранения файлов.
+### Все ли стрелки идут вниз
 
-## PetClinic: добавление визита
+Основная цепочка действительно идёт вниз: **контроллер → сервис → репозиторий или файловое хранилище**. Обратно сущности и репозитории контроллеры не вызывают, поэтому явной циклической зависимости в этом сценарии я не увидел.
 
-Трассировку выполнил агент `/root/petclinic_trace`, модель `gpt-6.1-sol`.
+Но граница между web-слоем и сервисом немного размыта. Метод `SubmissionService.submit` принимает `MultipartFile`, а это тип из Spring Web. Получается, что сервис знает, каким способом файл пришёл из HTTP-запроса. Ещё `SubmissionService` обращается прямо к `AssignmentRepository`, хотя в проекте существует `AssignmentService`. Это не стрелка вверх, но один слой сервиса в этом месте обходит другой сервис и сам работает с чужим репозиторием.
 
-Исследован официальный репозиторий [spring-projects/spring-petclinic](https://github.com/spring-projects/spring-petclinic), ветка `main`, commit [`500158f`](https://github.com/spring-projects/spring-petclinic/tree/500158f732419217507c7656904b8e6aa1bcc0d6).
+Я бы сделал отдельную команду, например `SubmitWorkCommand`, с id задания, списком ссылок, комментарием и нейтральным описанием файла. Контроллер преобразовывал бы `MultipartFile` в эту команду, а `SubmissionService` работал бы через интерфейс файлового хранилища и не зависел от Spring Web.
 
-### Слои
+**Зачем нужна граница:** чтобы правила сдачи можно было использовать из веб-формы, REST API или другого интерфейса без изменений в сервисе.
 
-- Представление и HTTP: [`VisitController`](https://github.com/spring-projects/spring-petclinic/blob/500158f732419217507c7656904b8e6aa1bcc0d6/src/main/java/org/springframework/samples/petclinic/owner/VisitController.java), HTML-форма `createOrUpdateVisitForm.html`, после перенаправления — `OwnerController`.
+## PetClinic — сценарий «добавить визит»
+
+Эту часть выполнял агент `/root/petclinic_trace` на модели `gpt-6.1-sol`.
+
+Агент исследовал официальный репозиторий [spring-projects/spring-petclinic](https://github.com/spring-projects/spring-petclinic), ветку `main`, commit [`500158f`](https://github.com/spring-projects/spring-petclinic/tree/500158f732419217507c7656904b8e6aa1bcc0d6).
+
+### Какие слои нашёл агент
+
+- Представление и HTTP: `VisitController` и шаблон `templates/pets/createOrUpdateVisitForm.html`.
 - Доменная модель: `Owner`, `Pet`, `Visit`.
-- Доступ к данным: `OwnerRepository`, наследующий `JpaRepository<Owner, Integer>`.
+- Доступ к данным: `OwnerRepository`, который наследуется от `JpaRepository<Owner, Integer>`.
 - Инфраструктура: Spring Data JPA, Hibernate и база данных.
 
-Отдельного сервисного слоя в этом сценарии нет: `VisitController` обращается к `OwnerRepository` напрямую.
+Отдельного сервиса для добавления визита в этой цепочке нет. `VisitController` получает `OwnerRepository` через конструктор и обращается к нему напрямую.
 
-### Цепочка вызовов
+### Как проходит добавление визита
 
-Перед GET и POST Spring MVC вызывает метод с `@ModelAttribute`:
+У `VisitController` есть метод `loadPetWithVisit` с аннотацией `@ModelAttribute`. Spring MVC вызывает его до обработчика GET и до обработчика POST. Поэтому сначала выполняется подготовка модели:
 
 ```text
 VisitController.java.loadPetWithVisit
@@ -83,7 +121,9 @@ VisitController.java.loadPetWithVisit
     → Collection.add
 ```
 
-При открытии формы продолжение выглядит так:
+На этом этапе контроллер загружает владельца по `ownerId`, находит его питомца по `petId`, создаёт пустой `Visit` и заранее добавляет его в коллекцию визитов питомца.
+
+При открытии формы дальнейшая цепочка короткая:
 
 ```text
 VisitController.java.loadPetWithVisit
@@ -91,11 +131,11 @@ VisitController.java.loadPetWithVisit
   → templates/pets/createOrUpdateVisitForm.html
 ```
 
-При отправке заполненной формы:
+При отправке формы Spring заполняет созданный объект `Visit` значениями пользователя и запускает Bean Validation. После этого выполняется основная цепочка:
 
 ```text
 VisitController.java.loadPetWithVisit
-  → Spring MVC: связывание полей формы и @Valid
+  → Spring MVC: заполнение полей формы и @Valid
   → VisitController.java.processNewVisitForm
     → Owner.java.addVisit
       → Owner.java.getPet
@@ -103,16 +143,28 @@ VisitController.java.loadPetWithVisit
         → Pet.java.getVisits
         → Collection.add
     → OwnerRepository.java.save
-      → Spring Data JPA / Hibernate
-      → SQL / база данных
+      → Spring Data JPA
+      → Hibernate
+      → SQL
+      → база данных
 ```
 
-Визит записывается каскадно при сохранении графа `Owner → Pet → Visit`, потому что у связей задан `CascadeType.ALL`. `Pet.addVisit` сам к базе не обращается.
+`processNewVisitForm` дополнительно проверяет дату визита: она должна быть в будущем. Если дата неверная или Bean Validation нашёл ошибку, контроллер снова показывает форму и до `save` не доходит.
 
-### Направление зависимостей и граница
+При успехе сохраняется не сам `Visit`, а весь объект `Owner`. Внутри него находится `Pet`, а внутри питомца — коллекция визитов. Для связей `Owner → Pet` и `Pet → Visit` указан `CascadeType.ALL`, поэтому Hibernate сохраняет новый визит каскадно. Сам метод `Pet.addVisit` запросов к базе не делает.
 
-Не все стрелки обозначают переход на слой ниже: `Owner → Pet` — вызов внутри доменной модели, а результаты методов возвращаются вверх по стеку. При этом обратной зависимости доменных классов от контроллера нет. Главная архитектурная особенность — контроллер пропускает сервисный слой и обращается сразу к репозиторию.
+Вызов `Pet.addVisit` встречается дважды: первый раз в `loadPetWithVisit`, второй — внутри `Owner.addVisit` после отправки формы. Коллекция визитов имеет тип `Set`, и в неё повторно добавляется тот же экземпляр `Visit`, поэтому второй одинаковый элемент не появляется.
 
-Я бы добавил `VisitBookingService.bookVisit(ownerId, petId, date, description)`, который внутри одной транзакции загружал бы владельца, проверял правила, добавлял визит и сохранял результат. Контроллеру остались бы HTTP, поля формы и отображение ошибок; правило допустимой даты находилось бы в сценарии, а не только в контроллере.
+После сохранения контроллер перенаправляет пользователя на `/owners/{ownerId}`, где уже показывается страница владельца с добавленным визитом.
 
-**Зачем нужна граница:** граница отделяет правила записи на визит от HTTP и деталей хранения.
+### Все ли стрелки идут вниз
+
+Не все стрелки в цепочке означают переход между слоями. Например, `Owner.addVisit → Pet.addVisit` — это вызов внутри одного доменного слоя. Возвраты результатов идут обратно вверх по стеку, но это не обратные зависимости между классами. Доменные классы `Owner`, `Pet` и `Visit` ничего не знают о `VisitController`.
+
+Главная особенность этой схемы в том, что контроллер перескакивает через сервисный слой: **`VisitController → OwnerRepository`**. Для маленького учебного приложения это работает, но правило о допустимой дате визита остаётся прямо в HTTP-контроллере. Если появится REST API или другой способ добавить визит, это правило придётся повторить.
+
+Я бы добавил сервис с методом вроде `VisitBookingService.bookVisit(ownerId, petId, date, description)`. Внутри одной транзакции он загружал бы владельца, находил питомца, проверял дату, добавлял визит и сохранял результат. Контроллеру остались бы только получение полей формы, вызов сервиса и показ ошибок.
+
+Также я бы не добавлял пустой `Visit` в коллекцию питомца на этапе подготовки формы. Для формы можно использовать отдельный объект ввода, а настоящий визит создавать только после успешной проверки данных.
+
+**Зачем нужна граница:** чтобы правила добавления визита не зависели от HTTP-контроллера и одинаково работали при любом способе вызова.
