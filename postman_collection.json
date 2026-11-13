@@ -1,0 +1,1514 @@
+{
+  "info": {
+    "_postman_id": "26505087-65af-463f-8f7f-29ac0d47c232",
+    "name": "API автомастерской",
+    "description": "API для ведения заказ-нарядов на ремонт автомобилей.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "58808029",
+    "_collection_link": "https://go.postman.co/collection/58808029-26505087-65af-463f-8f7f-29ac0d47c232?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "work-orders",
+      "item": [
+        {
+          "name": "{order_id}",
+          "item": [
+            {
+              "name": "Получить заказ-наряд по ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/work-orders/:order_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "work-orders",
+                    ":order_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "order_id",
+                      "value": "1",
+                      "description": "Идентификатор заказ-наряда."
+                    }
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "Данные заказ-наряда.",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: bearer",
+                        "key": "Authorization",
+                        "value": "Bearer <token>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/work-orders/:order_id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "work-orders",
+                        ":order_id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "order_id",
+                          "value": "1",
+                          "description": "Идентификатор заказ-наряда."
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "Cache-Control",
+                      "value": ""
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "Link",
+                      "value": ""
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"id\": 1,\n  \"vehiclePlate\": \"А123ВС196\",\n  \"workDescription\": \"Замена моторного масла и фильтра\",\n  \"status\": \"scheduled\",\n  \"href\": \"/work-orders/1\"\n}"
+                },
+                {
+                  "name": "Параметры или тело запроса нарушают ограничения схемы.",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/problem+json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: bearer",
+                        "key": "Authorization",
+                        "value": "Bearer <token>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/work-orders/:order_id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "work-orders",
+                        ":order_id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "order_id",
+                          "value": "1",
+                          "description": "Идентификатор заказ-наряда."
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Bad Request",
+                  "code": 400,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/problem+json"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"title\": \"Not Found\",\n  \"status\": 404,\n  \"detail\": \"Заказ-наряд с ID 1 не найден.\",\n  \"type\": \"about:blank\"\n}"
+                },
+                {
+                  "name": "Токен отсутствует или недействителен.",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/problem+json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: bearer",
+                        "key": "Authorization",
+                        "value": "Bearer <token>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/work-orders/:order_id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "work-orders",
+                        ":order_id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "order_id",
+                          "value": "1",
+                          "description": "Идентификатор заказ-наряда."
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/problem+json"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Схема аутентификации для повторного запроса.",
+                        "type": "text/plain"
+                      },
+                      "key": "WWW-Authenticate",
+                      "value": "Bearer realm=\"workshop\""
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"title\": \"Not Found\",\n  \"status\": 404,\n  \"detail\": \"Заказ-наряд с ID 1 не найден.\",\n  \"type\": \"about:blank\"\n}"
+                },
+                {
+                  "name": "Заказ-наряд с указанным ID или запрошенный путь не найден.",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/problem+json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: bearer",
+                        "key": "Authorization",
+                        "value": "Bearer <token>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/work-orders/:order_id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "work-orders",
+                        ":order_id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "order_id",
+                          "value": "1",
+                          "description": "Идентификатор заказ-наряда."
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/problem+json"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "Cache-Control",
+                      "value": ""
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"title\": \"Not Found\",\n  \"status\": 404,\n  \"detail\": \"Заказ-наряд с ID 1 не найден.\",\n  \"type\": \"about:blank\"\n}"
+                }
+              ]
+            },
+            {
+              "name": "Заменить данные заказ-наряда",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"vehiclePlate\": \"А123ВС196\",\n  \"workDescription\": \"Замена моторного масла и фильтра\",\n  \"status\": \"scheduled\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/work-orders/:order_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "work-orders",
+                    ":order_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "order_id",
+                      "value": "1",
+                      "description": "Идентификатор заказ-наряда."
+                    }
+                  ]
+                },
+                "description": "Требуется роль сотрудника с правом записи."
+              },
+              "response": [
+                {
+                  "name": "Данные заказ-наряда.",
+                  "originalRequest": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: bearer",
+                        "key": "Authorization",
+                        "value": "Bearer <token>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"vehiclePlate\": \"А123ВС196\",\n  \"workDescription\": \"Замена моторного масла и фильтра\",\n  \"status\": \"scheduled\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/work-orders/:order_id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "work-orders",
+                        ":order_id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "order_id",
+                          "value": "1",
+                          "description": "Идентификатор заказ-наряда."
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "Cache-Control",
+                      "value": ""
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "Link",
+                      "value": ""
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"id\": 1,\n  \"vehiclePlate\": \"А123ВС196\",\n  \"workDescription\": \"Замена моторного масла и фильтра\",\n  \"status\": \"scheduled\",\n  \"href\": \"/work-orders/1\"\n}"
+                },
+                {
+                  "name": "Параметры или тело запроса нарушают ограничения схемы.",
+                  "originalRequest": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/problem+json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: bearer",
+                        "key": "Authorization",
+                        "value": "Bearer <token>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"vehiclePlate\": \"А123ВС196\",\n  \"workDescription\": \"Замена моторного масла и фильтра\",\n  \"status\": \"scheduled\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/work-orders/:order_id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "work-orders",
+                        ":order_id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "order_id",
+                          "value": "1",
+                          "description": "Идентификатор заказ-наряда."
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Bad Request",
+                  "code": 400,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/problem+json"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"title\": \"Not Found\",\n  \"status\": 404,\n  \"detail\": \"Заказ-наряд с ID 1 не найден.\",\n  \"type\": \"about:blank\"\n}"
+                },
+                {
+                  "name": "Токен отсутствует или недействителен.",
+                  "originalRequest": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/problem+json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: bearer",
+                        "key": "Authorization",
+                        "value": "Bearer <token>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"vehiclePlate\": \"А123ВС196\",\n  \"workDescription\": \"Замена моторного масла и фильтра\",\n  \"status\": \"scheduled\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/work-orders/:order_id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "work-orders",
+                        ":order_id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "order_id",
+                          "value": "1",
+                          "description": "Идентификатор заказ-наряда."
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/problem+json"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Схема аутентификации для повторного запроса.",
+                        "type": "text/plain"
+                      },
+                      "key": "WWW-Authenticate",
+                      "value": "Bearer realm=\"workshop\""
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"title\": \"Not Found\",\n  \"status\": 404,\n  \"detail\": \"Заказ-наряд с ID 1 не найден.\",\n  \"type\": \"about:blank\"\n}"
+                },
+                {
+                  "name": "Токен распознан, но у сотрудника нет права записи.",
+                  "originalRequest": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/problem+json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: bearer",
+                        "key": "Authorization",
+                        "value": "Bearer <token>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"vehiclePlate\": \"А123ВС196\",\n  \"workDescription\": \"Замена моторного масла и фильтра\",\n  \"status\": \"scheduled\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/work-orders/:order_id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "work-orders",
+                        ":order_id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "order_id",
+                          "value": "1",
+                          "description": "Идентификатор заказ-наряда."
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Forbidden",
+                  "code": 403,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/problem+json"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"title\": \"Not Found\",\n  \"status\": 404,\n  \"detail\": \"Заказ-наряд с ID 1 не найден.\",\n  \"type\": \"about:blank\"\n}"
+                },
+                {
+                  "name": "Заказ-наряд с указанным ID или запрошенный путь не найден.",
+                  "originalRequest": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/problem+json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: bearer",
+                        "key": "Authorization",
+                        "value": "Bearer <token>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"vehiclePlate\": \"А123ВС196\",\n  \"workDescription\": \"Замена моторного масла и фильтра\",\n  \"status\": \"scheduled\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/work-orders/:order_id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "work-orders",
+                        ":order_id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "order_id",
+                          "value": "1",
+                          "description": "Идентификатор заказ-наряда."
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/problem+json"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "Cache-Control",
+                      "value": ""
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"title\": \"Not Found\",\n  \"status\": 404,\n  \"detail\": \"Заказ-наряд с ID 1 не найден.\",\n  \"type\": \"about:blank\"\n}"
+                },
+                {
+                  "name": "Тело запроса должно иметь тип application/json.",
+                  "originalRequest": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/problem+json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: bearer",
+                        "key": "Authorization",
+                        "value": "Bearer <token>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"vehiclePlate\": \"А123ВС196\",\n  \"workDescription\": \"Замена моторного масла и фильтра\",\n  \"status\": \"scheduled\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/work-orders/:order_id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "work-orders",
+                        ":order_id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "order_id",
+                          "value": "1",
+                          "description": "Идентификатор заказ-наряда."
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unsupported Media Type",
+                  "code": 415,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/problem+json"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"title\": \"Not Found\",\n  \"status\": 404,\n  \"detail\": \"Заказ-наряд с ID 1 не найден.\",\n  \"type\": \"about:blank\"\n}"
+                }
+              ]
+            },
+            {
+              "name": "Удалить заказ-наряд",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/work-orders/:order_id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "work-orders",
+                    ":order_id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "order_id",
+                      "value": "1",
+                      "description": "Идентификатор заказ-наряда."
+                    }
+                  ]
+                },
+                "description": "Требуется роль сотрудника с правом записи."
+              },
+              "response": [
+                {
+                  "name": "Заказ-наряд удалён.",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: bearer",
+                        "key": "Authorization",
+                        "value": "Bearer <token>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/work-orders/:order_id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "work-orders",
+                        ":order_id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "order_id",
+                          "value": "1",
+                          "description": "Идентификатор заказ-наряда."
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "Cache-Control",
+                      "value": ""
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "Link",
+                      "value": ""
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"id\": 1,\n  \"deleted\": true\n}"
+                },
+                {
+                  "name": "Параметры или тело запроса нарушают ограничения схемы.",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/problem+json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: bearer",
+                        "key": "Authorization",
+                        "value": "Bearer <token>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/work-orders/:order_id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "work-orders",
+                        ":order_id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "order_id",
+                          "value": "1",
+                          "description": "Идентификатор заказ-наряда."
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Bad Request",
+                  "code": 400,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/problem+json"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"title\": \"Not Found\",\n  \"status\": 404,\n  \"detail\": \"Заказ-наряд с ID 1 не найден.\",\n  \"type\": \"about:blank\"\n}"
+                },
+                {
+                  "name": "Токен отсутствует или недействителен.",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/problem+json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: bearer",
+                        "key": "Authorization",
+                        "value": "Bearer <token>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/work-orders/:order_id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "work-orders",
+                        ":order_id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "order_id",
+                          "value": "1",
+                          "description": "Идентификатор заказ-наряда."
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/problem+json"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "Схема аутентификации для повторного запроса.",
+                        "type": "text/plain"
+                      },
+                      "key": "WWW-Authenticate",
+                      "value": "Bearer realm=\"workshop\""
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"title\": \"Not Found\",\n  \"status\": 404,\n  \"detail\": \"Заказ-наряд с ID 1 не найден.\",\n  \"type\": \"about:blank\"\n}"
+                },
+                {
+                  "name": "Токен распознан, но у сотрудника нет права записи.",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/problem+json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: bearer",
+                        "key": "Authorization",
+                        "value": "Bearer <token>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/work-orders/:order_id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "work-orders",
+                        ":order_id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "order_id",
+                          "value": "1",
+                          "description": "Идентификатор заказ-наряда."
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Forbidden",
+                  "code": 403,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/problem+json"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"title\": \"Not Found\",\n  \"status\": 404,\n  \"detail\": \"Заказ-наряд с ID 1 не найден.\",\n  \"type\": \"about:blank\"\n}"
+                },
+                {
+                  "name": "Заказ-наряд с указанным ID или запрошенный путь не найден.",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/problem+json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: bearer",
+                        "key": "Authorization",
+                        "value": "Bearer <token>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/work-orders/:order_id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "work-orders",
+                        ":order_id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "order_id",
+                          "value": "1",
+                          "description": "Идентификатор заказ-наряда."
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/problem+json"
+                    },
+                    {
+                      "disabled": false,
+                      "description": {
+                        "content": "",
+                        "type": "text/plain"
+                      },
+                      "key": "Cache-Control",
+                      "value": ""
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"title\": \"Not Found\",\n  \"status\": 404,\n  \"detail\": \"Заказ-наряд с ID 1 не найден.\",\n  \"type\": \"about:blank\"\n}"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Получить список заказ-нарядов",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/work-orders?status=scheduled",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "work-orders"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "scheduled",
+                  "description": "Если указан, вернуть только заказ-наряды с этим статусом."
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Список заказ-нарядов, отсортированный по ID по возрастанию.",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/work-orders?status=scheduled",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "work-orders"
+                  ],
+                  "query": [
+                    {
+                      "description": "Если указан, вернуть только заказ-наряды с этим статусом.",
+                      "key": "status",
+                      "value": "scheduled"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "disabled": false,
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "key": "Cache-Control",
+                  "value": ""
+                }
+              ],
+              "cookie": [],
+              "body": "[\n  {\n    \"id\": 1,\n    \"vehiclePlate\": \"А123ВС196\",\n    \"workDescription\": \"Замена моторного масла и фильтра\",\n    \"status\": \"scheduled\",\n    \"href\": \"/work-orders/1\"\n  },\n  {\n    \"id\": 1,\n    \"vehiclePlate\": \"А123ВС196\",\n    \"workDescription\": \"Замена моторного масла и фильтра\",\n    \"status\": \"scheduled\",\n    \"href\": \"/work-orders/1\"\n  }\n]"
+            },
+            {
+              "name": "Параметры или тело запроса нарушают ограничения схемы.",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/problem+json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/work-orders?status=scheduled",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "work-orders"
+                  ],
+                  "query": [
+                    {
+                      "description": "Если указан, вернуть только заказ-наряды с этим статусом.",
+                      "key": "status",
+                      "value": "scheduled"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/problem+json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"title\": \"Not Found\",\n  \"status\": 404,\n  \"detail\": \"Заказ-наряд с ID 1 не найден.\",\n  \"type\": \"about:blank\"\n}"
+            },
+            {
+              "name": "Токен отсутствует или недействителен.",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/problem+json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/work-orders?status=scheduled",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "work-orders"
+                  ],
+                  "query": [
+                    {
+                      "description": "Если указан, вернуть только заказ-наряды с этим статусом.",
+                      "key": "status",
+                      "value": "scheduled"
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/problem+json"
+                },
+                {
+                  "disabled": false,
+                  "description": {
+                    "content": "Схема аутентификации для повторного запроса.",
+                    "type": "text/plain"
+                  },
+                  "key": "WWW-Authenticate",
+                  "value": "Bearer realm=\"workshop\""
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"title\": \"Not Found\",\n  \"status\": 404,\n  \"detail\": \"Заказ-наряд с ID 1 не найден.\",\n  \"type\": \"about:blank\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Создать заказ-наряд",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"vehiclePlate\": \"А123ВС196\",\n  \"workDescription\": \"Замена моторного масла и фильтра\",\n  \"status\": \"scheduled\"\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/work-orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "work-orders"
+              ]
+            },
+            "description": "Требуется роль сотрудника с правом записи."
+          },
+          "response": [
+            {
+              "name": "Данные заказ-наряда.",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"vehiclePlate\": \"А123ВС196\",\n  \"workDescription\": \"Замена моторного масла и фильтра\",\n  \"status\": \"scheduled\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/work-orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "work-orders"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "disabled": false,
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "key": "Cache-Control",
+                  "value": ""
+                },
+                {
+                  "disabled": false,
+                  "description": {
+                    "content": "",
+                    "type": "text/plain"
+                  },
+                  "key": "Link",
+                  "value": ""
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"id\": 1,\n  \"vehiclePlate\": \"А123ВС196\",\n  \"workDescription\": \"Замена моторного масла и фильтра\",\n  \"status\": \"scheduled\",\n  \"href\": \"/work-orders/1\"\n}"
+            },
+            {
+              "name": "Параметры или тело запроса нарушают ограничения схемы.",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/problem+json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"vehiclePlate\": \"А123ВС196\",\n  \"workDescription\": \"Замена моторного масла и фильтра\",\n  \"status\": \"scheduled\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/work-orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "work-orders"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/problem+json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"title\": \"Not Found\",\n  \"status\": 404,\n  \"detail\": \"Заказ-наряд с ID 1 не найден.\",\n  \"type\": \"about:blank\"\n}"
+            },
+            {
+              "name": "Токен отсутствует или недействителен.",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/problem+json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"vehiclePlate\": \"А123ВС196\",\n  \"workDescription\": \"Замена моторного масла и фильтра\",\n  \"status\": \"scheduled\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/work-orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "work-orders"
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/problem+json"
+                },
+                {
+                  "disabled": false,
+                  "description": {
+                    "content": "Схема аутентификации для повторного запроса.",
+                    "type": "text/plain"
+                  },
+                  "key": "WWW-Authenticate",
+                  "value": "Bearer realm=\"workshop\""
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"title\": \"Not Found\",\n  \"status\": 404,\n  \"detail\": \"Заказ-наряд с ID 1 не найден.\",\n  \"type\": \"about:blank\"\n}"
+            },
+            {
+              "name": "Токен распознан, но у сотрудника нет права записи.",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/problem+json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"vehiclePlate\": \"А123ВС196\",\n  \"workDescription\": \"Замена моторного масла и фильтра\",\n  \"status\": \"scheduled\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/work-orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "work-orders"
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/problem+json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"title\": \"Not Found\",\n  \"status\": 404,\n  \"detail\": \"Заказ-наряд с ID 1 не найден.\",\n  \"type\": \"about:blank\"\n}"
+            },
+            {
+              "name": "Тело запроса должно иметь тип application/json.",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/problem+json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: bearer",
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"vehiclePlate\": \"А123ВС196\",\n  \"workDescription\": \"Замена моторного масла и фильтра\",\n  \"status\": \"scheduled\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/work-orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "work-orders"
+                  ]
+                }
+              },
+              "status": "Unsupported Media Type",
+              "code": 415,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/problem+json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"title\": \"Not Found\",\n  \"status\": 404,\n  \"detail\": \"Заказ-наряд с ID 1 не найден.\",\n  \"type\": \"about:blank\"\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    }
+  ]
+}
