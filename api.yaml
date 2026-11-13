@@ -25,6 +25,9 @@ paths:
       responses:
         '200':
           description: Список заказ-нарядов, отсортированный по ID по возрастанию.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/CacheControl'
           content:
             application/json:
               schema:
@@ -104,6 +107,11 @@ paths:
       responses:
         '200':
           description: Заказ-наряд удалён.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/CacheControl'
+            Link:
+              $ref: '#/components/headers/CollectionLink'
           content:
             application/json:
               schema:
@@ -117,6 +125,17 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 components:
+  headers:
+    CacheControl:
+      description: Ответ с данными автомастерской не сохраняется в кэше.
+      schema:
+        type: string
+        example: no-store
+    CollectionLink:
+      description: Ссылка на список заказ-нарядов с отношением collection.
+      schema:
+        type: string
+        example: '</work-orders>; rel="collection"'
   securitySchemes:
     WorkshopToken:
       type: http
@@ -133,6 +152,11 @@ components:
   responses:
     WorkOrderResult:
       description: Данные заказ-наряда.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/CacheControl'
+        Link:
+          $ref: '#/components/headers/CollectionLink'
       content:
         application/json:
           schema:
@@ -145,6 +169,12 @@ components:
             $ref: '#/components/schemas/Problem'
     Unauthorized:
       description: Токен отсутствует или недействителен.
+      headers:
+        WWW-Authenticate:
+          description: Схема аутентификации для повторного запроса.
+          schema:
+            type: string
+            example: 'Bearer realm="workshop"'
       content:
         application/problem+json:
           schema:
@@ -156,7 +186,10 @@ components:
           schema:
             $ref: '#/components/schemas/Problem'
     NotFound:
-      description: Заказ-наряд с указанным ID не найден.
+      description: Заказ-наряд с указанным ID или запрошенный путь не найден.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/CacheControl'
       content:
         application/problem+json:
           schema:
@@ -195,7 +228,7 @@ components:
     WorkOrder:
       type: object
       additionalProperties: false
-      required: [id, vehiclePlate, workDescription, status]
+      required: [id, vehiclePlate, workDescription, status, href]
       properties:
         id:
           type: integer
@@ -209,6 +242,11 @@ components:
           example: Замена моторного масла и фильтра
         status:
           $ref: '#/components/schemas/WorkOrderStatus'
+        href:
+          type: string
+          format: uri-reference
+          description: Адрес заказ-наряда для чтения, замены или удаления.
+          example: /work-orders/1
     DeletionResult:
       type: object
       additionalProperties: false

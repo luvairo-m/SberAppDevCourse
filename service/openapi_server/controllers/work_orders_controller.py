@@ -10,10 +10,14 @@ from openapi_server.models.work_order import WorkOrder
 _orders: dict[int, WorkOrder] = {}
 _order_ids = count(1)
 _lock = Lock()
+_collection_path = "/work-orders"
 
 
-def _ok(data):
-    return data, 200, {"Content-Type": "application/json"}
+def _ok(data, *, link_to_collection=False):
+    headers = {"Content-Type": "application/json", "Cache-Control": "no-store"}
+    if link_to_collection:
+        headers["Link"] = f'<{_collection_path}>; rel="collection"'
+    return data, 200, headers
 
 
 def _require_write_access(token_info):
@@ -38,6 +42,7 @@ def _work_order_from_body(order_id, body):
         vehicle_plate=body["vehiclePlate"],
         work_description=body["workDescription"],
         status=body["status"],
+        href=f"{_collection_path}/{order_id}",
     )
 
 
@@ -53,7 +58,7 @@ def list_work_orders(status=None):
 
 def get_work_order(order_id):
     with _lock:
-        return _ok(_get_existing_order(order_id))
+        return _ok(_get_existing_order(order_id), link_to_collection=True)
 
 
 def create_work_order(body, token_info):
@@ -62,7 +67,7 @@ def create_work_order(body, token_info):
         order_id = next(_order_ids)
         order = _work_order_from_body(order_id, body)
         _orders[order_id] = order
-    return _ok(order)
+    return _ok(order, link_to_collection=True)
 
 
 def replace_work_order(order_id, body, token_info):
@@ -71,7 +76,7 @@ def replace_work_order(order_id, body, token_info):
         _get_existing_order(order_id)
         order = _work_order_from_body(order_id, body)
         _orders[order_id] = order
-    return _ok(order)
+    return _ok(order, link_to_collection=True)
 
 
 def delete_work_order(order_id, token_info):
@@ -79,4 +84,4 @@ def delete_work_order(order_id, token_info):
     with _lock:
         _get_existing_order(order_id)
         del _orders[order_id]
-    return _ok(DeletionResult(id=order_id, deleted=True))
+    return _ok(DeletionResult(id=order_id, deleted=True), link_to_collection=True)

@@ -14,7 +14,7 @@ class WorkOrder(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, id=None, vehicle_plate=None, work_description=None, status=None):  # noqa: E501
+    def __init__(self, id=None, vehicle_plate=None, work_description=None, status=None, href=None):  # noqa: E501
         """WorkOrder - a model defined in OpenAPI
 
         :param id: The id of this WorkOrder.  # noqa: E501
@@ -25,25 +25,30 @@ class WorkOrder(Model):
         :type work_description: str
         :param status: The status of this WorkOrder.  # noqa: E501
         :type status: WorkOrderStatus
+        :param href: The href of this WorkOrder.  # noqa: E501
+        :type href: str
         """
         self.openapi_types = {
             'id': int,
             'vehicle_plate': str,
             'work_description': str,
-            'status': WorkOrderStatus
+            'status': WorkOrderStatus,
+            'href': str
         }
 
         self.attribute_map = {
             'id': 'id',
             'vehicle_plate': 'vehiclePlate',
             'work_description': 'workDescription',
-            'status': 'status'
+            'status': 'status',
+            'href': 'href'
         }
 
         self._id = id
         self._vehicle_plate = vehicle_plate
         self._work_description = work_description
         self._status = status
+        self._href = href
 
     @classmethod
     def from_dict(cls, dikt) -> 'WorkOrder':
@@ -149,3 +154,28 @@ class WorkOrder(Model):
             raise ValueError("Invalid value for `status`, must not be `None`")  # noqa: E501
 
         self._status = status
+
+    @property
+    def href(self) -> str:
+        """Gets the href of this WorkOrder.
+
+        Адрес заказ-наряда для чтения, замены или удаления.  # noqa: E501
+
+        :return: The href of this WorkOrder.
+        :rtype: str
+        """
+        return self._href
+
+    @href.setter
+    def href(self, href: str):
+        """Sets the href of this WorkOrder.
+
+        Адрес заказ-наряда для чтения, замены или удаления.  # noqa: E501
+
+        :param href: The href of this WorkOrder.
+        :type href: str
+        """
+        if href is None:
+            raise ValueError("Invalid value for `href`, must not be `None`")  # noqa: E501
+
+        self._href = href

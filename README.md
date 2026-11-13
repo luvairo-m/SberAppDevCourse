@@ -8,22 +8,22 @@ API помогает сотрудникам автомастерской вес�
 
 ## Как делали
 
-1. В [`api.yaml`](api.yaml) описаны пять операций OpenAPI 3.0.3. Для списка задан фильтр по статусу, для отдельного заказ-наряда используется ID.
-2. В `components` вынесены DTO запросов, ответов и ошибок. Сервер назначает ID при создании, а роль сотрудника определяется по токену и не попадает в DTO заказ-наряда.
-3. Спецификация проверена OpenAPI Generator CLI 7.26.0. Тем же инструментом сгенерирован каркас Python Flask в [`service/`](service/).
+Сначала в [`api.yaml`](api.yaml) описаны список заказ-нарядов и операции с одним заказом. Список можно отфильтровать по статусу. Поля запроса и ответа вынесены в DTO в разделе `components`. Сервер сам выдаёт ID и возвращает адрес заказа в поле `href`.
 
-   ```sh
-   openapi-generator-cli validate -i api.yaml
-   openapi-generator-cli generate -i api.yaml -g python-flask -o service --additional-properties useConnexion3=true --global-property apiTests=false
-   ```
+Затем `api.yaml` проверен через OpenAPI Generator CLI 7.26.0. Из него сгенерирован Flask-сервис в папке [`service/`](service/).
 
-   CLI можно установить командой `python -m pip install openapi-generator-cli==7.26.0`. Для генератора нужен Java 11 или новее.
+```sh
+openapi-generator-cli validate -i api.yaml
+openapi-generator-cli generate -i api.yaml -g python-flask -o service --additional-properties useConnexion3=true --global-property apiTests=false
+```
 
-4. В сгенерированные контроллеры добавлены операции над заказ-нарядами и проверка демо-токенов. `.openapi-generator-ignore` сохраняет эти контроллеры при повторной генерации в `service/`. Данные хранятся в памяти процесса и сбрасываются при перезапуске.
+Для генерации нужны Java 11 или новее и CLI (`python -m pip install openapi-generator-cli==7.26.0`).
+
+В каркасе дописаны обработчики и проверка демо-токенов. Заказы лежат в памяти и пропадают при перезапуске. Файл `.openapi-generator-ignore` сохраняет дописанный код при повторной генерации.
 
 ## Запуск и проверка
 
-Из корня репозитория, в окружении Python 3.12:
+Для запуска на Python 3.12 выполните из корня репозитория следующие команды.
 
 ```sh
 cd service
@@ -31,7 +31,9 @@ python -m pip install -r requirements.txt
 python -m openapi_server
 ```
 
-Интерфейс Swagger UI доступен на [localhost:8080/ui/](http://localhost:8080/ui/). В Swagger UI нажмите **Authorize**. В Postman выберите **Import**, загрузите `api.yaml` и создайте коллекцию из OpenAPI. В разделе **Authorization** коллекции выберите **Bearer Token**. Для записи используйте `demo-editor`, для чтения достаточно `demo-reader`.
+В Swagger UI нажмите **Authorize** и введите `demo-editor` для чтения и записи или `demo-reader` для чтения. [Открыть Swagger UI](http://localhost:8080/ui/).
+
+В Postman нажмите **Import** и выберите `api.yaml`, чтобы создать коллекцию. В настройках авторизации коллекции выберите **Bearer Token** и введите один из демо-токенов.
 
 | Метод и путь | Что делает |
 | --- | --- |
@@ -51,4 +53,4 @@ python -m openapi_server
 }
 ```
 
-Подставьте `id` из ответа в `GET`, `PUT` и `DELETE`. Запрос без токена вернёт `401`, попытка записи с `demo-reader` вернёт `403`, а чтение удалённого заказ-наряда вернёт `404`.
+Возьмите адрес из `href` и попробуйте прочитать, заменить и удалить заказ. Запрос без токена вернёт `401`, запись с `demo-reader` вернёт `403`, а чтение удалённого заказа вернёт `404`.

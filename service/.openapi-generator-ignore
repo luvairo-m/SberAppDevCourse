@@ -22,6 +22,8 @@
 # Then explicitly reverse the ignore rule for a single file:
 #!docs/README.md
 
-# Controllers completed after generation.
+# Handwritten authorization and request handling.
+openapi_server/__main__.py
 openapi_server/controllers/security_controller.py
 openapi_server/controllers/work_orders_controller.py
+README.md

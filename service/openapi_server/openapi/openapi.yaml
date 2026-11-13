@@ -33,6 +33,9 @@ paths:
                 type: array
           description: "Список заказ-нарядов, отсортированный по ID по возрастанию\
             ."
+          headers:
+            Cache-Control:
+              $ref: "#/components/headers/CacheControl"
         "400":
           content:
             application/problem+json:
@@ -45,6 +48,14 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
           description: Токен отсутствует или недействителен.
+          headers:
+            WWW-Authenticate:
+              description: Схема аутентификации для повторного запроса.
+              explode: false
+              schema:
+                example: Bearer realm="workshop"
+                type: string
+              style: simple
       summary: Получить список заказ-нарядов
       tags:
       - workOrders
@@ -61,6 +72,11 @@ paths:
               schema:
                 $ref: "#/components/schemas/WorkOrder"
           description: Данные заказ-наряда.
+          headers:
+            Cache-Control:
+              $ref: "#/components/headers/CacheControl"
+            Link:
+              $ref: "#/components/headers/CollectionLink"
         "400":
           content:
             application/problem+json:
@@ -73,6 +89,14 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
           description: Токен отсутствует или недействителен.
+          headers:
+            WWW-Authenticate:
+              description: Схема аутентификации для повторного запроса.
+              explode: false
+              schema:
+                example: Bearer realm="workshop"
+                type: string
+              style: simple
         "403":
           content:
             application/problem+json:
@@ -111,6 +135,11 @@ paths:
               schema:
                 $ref: "#/components/schemas/DeletionResult"
           description: Заказ-наряд удалён.
+          headers:
+            Cache-Control:
+              $ref: "#/components/headers/CacheControl"
+            Link:
+              $ref: "#/components/headers/CollectionLink"
         "400":
           content:
             application/problem+json:
@@ -123,6 +152,14 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
           description: Токен отсутствует или недействителен.
+          headers:
+            WWW-Authenticate:
+              description: Схема аутентификации для повторного запроса.
+              explode: false
+              schema:
+                example: Bearer realm="workshop"
+                type: string
+              style: simple
         "403":
           content:
             application/problem+json:
@@ -134,7 +171,10 @@ paths:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
-          description: Заказ-наряд с указанным ID не найден.
+          description: Заказ-наряд с указанным ID или запрошенный путь не найден.
+          headers:
+            Cache-Control:
+              $ref: "#/components/headers/CacheControl"
       summary: Удалить заказ-наряд
       tags:
       - workOrders
@@ -159,6 +199,11 @@ paths:
               schema:
                 $ref: "#/components/schemas/WorkOrder"
           description: Данные заказ-наряда.
+          headers:
+            Cache-Control:
+              $ref: "#/components/headers/CacheControl"
+            Link:
+              $ref: "#/components/headers/CollectionLink"
         "400":
           content:
             application/problem+json:
@@ -171,12 +216,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
           description: Токен отсутствует или недействителен.
+          headers:
+            WWW-Authenticate:
+              description: Схема аутентификации для повторного запроса.
+              explode: false
+              schema:
+                example: Bearer realm="workshop"
+                type: string
+              style: simple
         "404":
           content:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
-          description: Заказ-наряд с указанным ID не найден.
+          description: Заказ-наряд с указанным ID или запрошенный путь не найден.
+          headers:
+            Cache-Control:
+              $ref: "#/components/headers/CacheControl"
       summary: Получить заказ-наряд по ID
       tags:
       - workOrders
@@ -204,6 +260,11 @@ paths:
               schema:
                 $ref: "#/components/schemas/WorkOrder"
           description: Данные заказ-наряда.
+          headers:
+            Cache-Control:
+              $ref: "#/components/headers/CacheControl"
+            Link:
+              $ref: "#/components/headers/CollectionLink"
         "400":
           content:
             application/problem+json:
@@ -216,6 +277,14 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
           description: Токен отсутствует или недействителен.
+          headers:
+            WWW-Authenticate:
+              description: Схема аутентификации для повторного запроса.
+              explode: false
+              schema:
+                example: Bearer realm="workshop"
+                type: string
+              style: simple
         "403":
           content:
             application/problem+json:
@@ -227,7 +296,10 @@ paths:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
-          description: Заказ-наряд с указанным ID не найден.
+          description: Заказ-наряд с указанным ID или запрошенный путь не найден.
+          headers:
+            Cache-Control:
+              $ref: "#/components/headers/CacheControl"
         "415":
           content:
             application/problem+json:
@@ -239,6 +311,21 @@ paths:
       - workOrders
       x-openapi-router-controller: openapi_server.controllers.work_orders_controller
 components:
+  headers:
+    CacheControl:
+      description: Ответ с данными автомастерской не сохраняется в кэше.
+      explode: false
+      schema:
+        example: no-store
+        type: string
+      style: simple
+    CollectionLink:
+      description: Ссылка на список заказ-нарядов с отношением collection.
+      explode: false
+      schema:
+        example: </work-orders>; rel="collection"
+        type: string
+      style: simple
   requestBodies:
     WorkOrderInput:
       content:
@@ -254,6 +341,11 @@ components:
           schema:
             $ref: "#/components/schemas/WorkOrder"
       description: Данные заказ-наряда.
+      headers:
+        Cache-Control:
+          $ref: "#/components/headers/CacheControl"
+        Link:
+          $ref: "#/components/headers/CollectionLink"
     BadRequest:
       content:
         application/problem+json:
@@ -266,6 +358,14 @@ components:
           schema:
             $ref: "#/components/schemas/Problem"
       description: Токен отсутствует или недействителен.
+      headers:
+        WWW-Authenticate:
+          description: Схема аутентификации для повторного запроса.
+          explode: false
+          schema:
+            example: Bearer realm="workshop"
+            type: string
+          style: simple
     Forbidden:
       content:
         application/problem+json:
@@ -277,7 +377,10 @@ components:
         application/problem+json:
           schema:
             $ref: "#/components/schemas/Problem"
-      description: Заказ-наряд с указанным ID не найден.
+      description: Заказ-наряд с указанным ID или запрошенный путь не найден.
+      headers:
+        Cache-Control:
+          $ref: "#/components/headers/CacheControl"
     UnsupportedMediaType:
       content:
         application/problem+json:
@@ -330,6 +433,7 @@ components:
         vehiclePlate: А123ВС196
         workDescription: Замена моторного масла и фильтра
         status: scheduled
+        href: /work-orders/1
       properties:
         id:
           example: 1
@@ -346,7 +450,14 @@ components:
           type: string
         status:
           $ref: "#/components/schemas/WorkOrderStatus"
+        href:
+          description: "Адрес заказ-наряда для чтения, замены или удаления."
+          example: /work-orders/1
+          format: uri-reference
+          title: href
+          type: string
       required:
+      - href
       - id
       - status
       - vehiclePlate
