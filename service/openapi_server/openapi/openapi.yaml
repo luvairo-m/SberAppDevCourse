@@ -1,0 +1,405 @@
+openapi: 3.0.3
+info:
+  description: API для ведения заказ-нарядов на ремонт автомобилей.
+  title: API автомастерской
+  version: 1.0.0
+servers:
+- url: http://localhost:8080
+security:
+- WorkshopToken: []
+tags:
+- description: Заказ-наряды автомастерской
+  name: workOrders
+paths:
+  /work-orders:
+    get:
+      operationId: list_work_orders
+      parameters:
+      - description: "Если указан, вернуть только заказ-наряды с этим статусом."
+        explode: true
+        in: query
+        name: status
+        required: false
+        schema:
+          $ref: "#/components/schemas/WorkOrderStatus"
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/WorkOrder"
+                type: array
+          description: "Список заказ-нарядов, отсортированный по ID по возрастанию\
+            ."
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+          description: Параметры или тело запроса нарушают ограничения схемы.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+          description: Токен отсутствует или недействителен.
+      summary: Получить список заказ-нарядов
+      tags:
+      - workOrders
+      x-openapi-router-controller: openapi_server.controllers.work_orders_controller
+    post:
+      description: Требуется роль сотрудника с правом записи.
+      operationId: create_work_order
+      requestBody:
+        $ref: "#/components/requestBodies/WorkOrderInput"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkOrder"
+          description: Данные заказ-наряда.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+          description: Параметры или тело запроса нарушают ограничения схемы.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+          description: Токен отсутствует или недействителен.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+          description: "Токен распознан, но у сотрудника нет права записи."
+        "415":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+          description: Тело запроса должно иметь тип application/json.
+      summary: Создать заказ-наряд
+      tags:
+      - workOrders
+      x-openapi-router-controller: openapi_server.controllers.work_orders_controller
+  /work-orders/{order_id}:
+    delete:
+      description: Требуется роль сотрудника с правом записи.
+      operationId: delete_work_order
+      parameters:
+      - description: Идентификатор заказ-наряда.
+        example: 1
+        explode: false
+        in: path
+        name: order_id
+        required: true
+        schema:
+          minimum: 1
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeletionResult"
+          description: Заказ-наряд удалён.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+          description: Параметры или тело запроса нарушают ограничения схемы.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+          description: Токен отсутствует или недействителен.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+          description: "Токен распознан, но у сотрудника нет права записи."
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+          description: Заказ-наряд с указанным ID не найден.
+      summary: Удалить заказ-наряд
+      tags:
+      - workOrders
+      x-openapi-router-controller: openapi_server.controllers.work_orders_controller
+    get:
+      operationId: get_work_order
+      parameters:
+      - description: Идентификатор заказ-наряда.
+        example: 1
+        explode: false
+        in: path
+        name: order_id
+        required: true
+        schema:
+          minimum: 1
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkOrder"
+          description: Данные заказ-наряда.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+          description: Параметры или тело запроса нарушают ограничения схемы.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+          description: Токен отсутствует или недействителен.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+          description: Заказ-наряд с указанным ID не найден.
+      summary: Получить заказ-наряд по ID
+      tags:
+      - workOrders
+      x-openapi-router-controller: openapi_server.controllers.work_orders_controller
+    put:
+      description: Требуется роль сотрудника с правом записи.
+      operationId: replace_work_order
+      parameters:
+      - description: Идентификатор заказ-наряда.
+        example: 1
+        explode: false
+        in: path
+        name: order_id
+        required: true
+        schema:
+          minimum: 1
+          type: integer
+        style: simple
+      requestBody:
+        $ref: "#/components/requestBodies/WorkOrderInput"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkOrder"
+          description: Данные заказ-наряда.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+          description: Параметры или тело запроса нарушают ограничения схемы.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+          description: Токен отсутствует или недействителен.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+          description: "Токен распознан, но у сотрудника нет права записи."
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+          description: Заказ-наряд с указанным ID не найден.
+        "415":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+          description: Тело запроса должно иметь тип application/json.
+      summary: Заменить данные заказ-наряда
+      tags:
+      - workOrders
+      x-openapi-router-controller: openapi_server.controllers.work_orders_controller
+components:
+  requestBodies:
+    WorkOrderInput:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/WorkOrderInput"
+      description: "Госномер автомобиля, описание работ и статус заказ-наряда."
+      required: true
+  responses:
+    WorkOrderResult:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/WorkOrder"
+      description: Данные заказ-наряда.
+    BadRequest:
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+      description: Параметры или тело запроса нарушают ограничения схемы.
+    Unauthorized:
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+      description: Токен отсутствует или недействителен.
+    Forbidden:
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+      description: "Токен распознан, но у сотрудника нет права записи."
+    NotFound:
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+      description: Заказ-наряд с указанным ID не найден.
+    UnsupportedMediaType:
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+      description: Тело запроса должно иметь тип application/json.
+  schemas:
+    WorkOrderStatus:
+      description: "Запланирован, в работе или завершён."
+      enum:
+      - scheduled
+      - in_progress
+      - completed
+      example: scheduled
+      title: WorkOrderStatus
+      type: string
+    WorkOrderInput:
+      additionalProperties: false
+      example:
+        vehiclePlate: А123ВС196
+        workDescription: Замена моторного масла и фильтра
+        status: scheduled
+      properties:
+        vehiclePlate:
+          example: А123ВС196
+          maxLength: 20
+          minLength: 1
+          pattern: \S
+          title: vehiclePlate
+          type: string
+        workDescription:
+          example: Замена моторного масла и фильтра
+          maxLength: 500
+          minLength: 1
+          pattern: \S
+          title: workDescription
+          type: string
+        status:
+          $ref: "#/components/schemas/WorkOrderStatus"
+      required:
+      - status
+      - vehiclePlate
+      - workDescription
+      title: WorkOrderInput
+      type: object
+    WorkOrder:
+      additionalProperties: false
+      example:
+        id: 1
+        vehiclePlate: А123ВС196
+        workDescription: Замена моторного масла и фильтра
+        status: scheduled
+      properties:
+        id:
+          example: 1
+          minimum: 1
+          title: id
+          type: integer
+        vehiclePlate:
+          example: А123ВС196
+          title: vehiclePlate
+          type: string
+        workDescription:
+          example: Замена моторного масла и фильтра
+          title: workDescription
+          type: string
+        status:
+          $ref: "#/components/schemas/WorkOrderStatus"
+      required:
+      - id
+      - status
+      - vehiclePlate
+      - workDescription
+      title: WorkOrder
+      type: object
+    DeletionResult:
+      additionalProperties: false
+      example:
+        id: 1
+        deleted: true
+      properties:
+        id:
+          example: 1
+          minimum: 1
+          title: id
+          type: integer
+        deleted:
+          example: true
+          title: deleted
+          type: boolean
+      required:
+      - deleted
+      - id
+      title: DeletionResult
+      type: object
+    Problem:
+      properties:
+        type:
+          example: about:blank
+          title: type
+          type: string
+        title:
+          example: Not Found
+          title: title
+          type: string
+        status:
+          example: 404
+          title: status
+          type: integer
+        detail:
+          example: Заказ-наряд с ID 1 не найден.
+          title: detail
+          type: string
+      required:
+      - detail
+      - status
+      - title
+      title: Problem
+      type: object
+  securitySchemes:
+    WorkshopToken:
+      description: Токен сотрудника в заголовке Authorization.
+      scheme: bearer
+      type: http
+      x-bearerInfoFunc: openapi_server.controllers.security_controller.info_from_WorkshopToken
