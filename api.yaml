@@ -1,0 +1,277 @@
+openapi: 3.0.3
+info:
+  title: API автомастерской
+  version: 1.0.0
+  description: API для ведения заказ-нарядов на ремонт автомобилей.
+servers:
+  - url: http://localhost:8080
+security:
+  - WorkshopToken: []
+tags:
+  - name: workOrders
+    description: Заказ-наряды автомастерской
+paths:
+  /work-orders:
+    get:
+      tags: [workOrders]
+      summary: Получить список заказ-нарядов
+      operationId: listWorkOrders
+      parameters:
+        - name: status
+          in: query
+          description: Если указан, вернуть только заказ-наряды с этим статусом.
+          schema:
+            $ref: '#/components/schemas/WorkOrderStatus'
+      responses:
+        '200':
+          description: Список заказ-нарядов, отсортированный по ID по возрастанию.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/CacheControl'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkOrder'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      tags: [workOrders]
+      summary: Создать заказ-наряд
+      operationId: createWorkOrder
+      description: Требуется роль сотрудника с правом записи.
+      requestBody:
+        $ref: '#/components/requestBodies/WorkOrderInput'
+      responses:
+        '200':
+          $ref: '#/components/responses/WorkOrderResult'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaType'
+  /work-orders/{order_id}:
+    parameters:
+      - name: order_id
+        in: path
+        required: true
+        description: Идентификатор заказ-наряда.
+        schema:
+          type: integer
+          minimum: 1
+        example: 1
+    get:
+      tags: [workOrders]
+      summary: Получить заказ-наряд по ID
+      operationId: getWorkOrder
+      responses:
+        '200':
+          $ref: '#/components/responses/WorkOrderResult'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags: [workOrders]
+      summary: Заменить данные заказ-наряда
+      operationId: replaceWorkOrder
+      description: Требуется роль сотрудника с правом записи.
+      requestBody:
+        $ref: '#/components/requestBodies/WorkOrderInput'
+      responses:
+        '200':
+          $ref: '#/components/responses/WorkOrderResult'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaType'
+    delete:
+      tags: [workOrders]
+      summary: Удалить заказ-наряд
+      operationId: deleteWorkOrder
+      description: Требуется роль сотрудника с правом записи.
+      responses:
+        '200':
+          description: Заказ-наряд удалён.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/CacheControl'
+            Link:
+              $ref: '#/components/headers/CollectionLink'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletionResult'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  headers:
+    CacheControl:
+      description: Ответ с данными автомастерской не сохраняется в кэше.
+      schema:
+        type: string
+        example: no-store
+    CollectionLink:
+      description: Ссылка на список заказ-нарядов с отношением collection.
+      schema:
+        type: string
+        example: '</work-orders>; rel="collection"'
+  securitySchemes:
+    WorkshopToken:
+      type: http
+      scheme: bearer
+      description: Токен сотрудника в заголовке Authorization.
+  requestBodies:
+    WorkOrderInput:
+      description: Госномер автомобиля, описание работ и статус заказ-наряда.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/WorkOrderInput'
+  responses:
+    WorkOrderResult:
+      description: Данные заказ-наряда.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/CacheControl'
+        Link:
+          $ref: '#/components/headers/CollectionLink'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/WorkOrder'
+    BadRequest:
+      description: Параметры или тело запроса нарушают ограничения схемы.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Unauthorized:
+      description: Токен отсутствует или недействителен.
+      headers:
+        WWW-Authenticate:
+          description: Схема аутентификации для повторного запроса.
+          schema:
+            type: string
+            example: 'Bearer realm="workshop"'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Forbidden:
+      description: Токен распознан, но у сотрудника нет права записи.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    NotFound:
+      description: Заказ-наряд с указанным ID или запрошенный путь не найден.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/CacheControl'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    UnsupportedMediaType:
+      description: Тело запроса должно иметь тип application/json.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+  schemas:
+    WorkOrderStatus:
+      type: string
+      description: Запланирован, в работе или завершён.
+      enum: [scheduled, in_progress, completed]
+      example: scheduled
+    WorkOrderInput:
+      type: object
+      additionalProperties: false
+      required: [vehiclePlate, workDescription, status]
+      properties:
+        vehiclePlate:
+          type: string
+          minLength: 1
+          maxLength: 20
+          pattern: '\S'
+          example: А123ВС196
+        workDescription:
+          type: string
+          minLength: 1
+          maxLength: 500
+          pattern: '\S'
+          example: Замена моторного масла и фильтра
+        status:
+          $ref: '#/components/schemas/WorkOrderStatus'
+    WorkOrder:
+      type: object
+      additionalProperties: false
+      required: [id, vehiclePlate, workDescription, status, href]
+      properties:
+        id:
+          type: integer
+          minimum: 1
+          example: 1
+        vehiclePlate:
+          type: string
+          example: А123ВС196
+        workDescription:
+          type: string
+          example: Замена моторного масла и фильтра
+        status:
+          $ref: '#/components/schemas/WorkOrderStatus'
+        href:
+          type: string
+          format: uri-reference
+          description: Адрес заказ-наряда для чтения, замены или удаления.
+          example: /work-orders/1
+    DeletionResult:
+      type: object
+      additionalProperties: false
+      required: [id, deleted]
+      properties:
+        id:
+          type: integer
+          minimum: 1
+          example: 1
+        deleted:
+          type: boolean
+          example: true
+    Problem:
+      type: object
+      required: [title, status, detail]
+      properties:
+        type:
+          type: string
+          example: about:blank
+        title:
+          type: string
+          example: Not Found
+        status:
+          type: integer
+          example: 404
+        detail:
+          type: string
+          example: Заказ-наряд с ID 1 не найден.
